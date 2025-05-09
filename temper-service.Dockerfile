@@ -4,7 +4,7 @@ LABEL maintainer "tuan t. pham" <tuan@vt.edu>
 ENV PKGS="python3 python3-serial python3-pip" \
     DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -yq update && apt-get dist-upgrade -yq \
+RUN apt-get -yq update && apt-get dist-upgrade curl -yq \
     && apt-get -yq install --no-install-recommends  ${PKGS} \
     && pip3 install flask
 

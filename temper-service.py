@@ -2,9 +2,9 @@
 
 import argparse
 import json
-
+import signal
 from flask import Flask
-
+import sys
 from temper import Temper, USBList
 
 # parsing config
@@ -47,5 +47,16 @@ def metrics():
     result = json.dumps(t.read(), indent=2)
     return result
 
+class GracefulKiller:
+  kill_now = False
+  def __init__(self):
+    signal.signal(signal.SIGINT, self.exit_gracefully)
+    signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+  def exit_gracefully(self, signum, frame):
+    sys.exit(1)
+
 if __name__ == '__main__':
+  killer = GracefulKiller()
+  while not killer.kill_now:
     app.run(host=host, port=port, debug=debug)

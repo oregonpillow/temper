@@ -8,36 +8,48 @@ Running `temper.py` as a service in docker container
 
 Running the service as a commandline
 ------------------------------------
-```
+```sh
 docker run --rm -it -p 2610:2610 temper/service:latest
 ```
 
 
 Snippet of config in `docker-compose.yml`
 -----------------------------------------
-```
+```yml
 ---
-version: '3'
-
 services:
-  temper:
-    container_name: temper
-    hostname: temper
+  temper-py:
+    container_name: temper-service
     image: temper/service:latest
-    restart: always
+    volumes:
+      - /dev:/dev
+    restart: unless-stopped
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: temper-service.Dockerfile
+      args:
+        - --no-cache
+    healthcheck:
+      test: curl --fail http://localhost:2610/metrics || exit 1
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
     ports:
       - 2610:2610
+    privileged: true
 ```
 
 Running the docker as a service using docker-compose config.
-```
+```sh
 docker-compose up -d
 ```
 
 
 Checking the service from another terminal
 ------------------------------------------
-```
+```sh
 # List available USB devices (including temper devices)
 http localhost:2610/list | jq -C
 
