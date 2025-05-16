@@ -29,6 +29,12 @@ def process_metrics(data):
   for device in data:
     for key, value in device.items():
       key = key.replace(' ', '_')
+      # ignore random outliers
+      if key == "internal_temperature" and is_numeric(value) and float(value) > float (100):
+        continue
+      # ignore random outliers
+      if key == "internal_humidity" and is_numeric(value) and float(value) > float (100):
+        continue
       if is_numeric(value) and key not in gauges:
         gauges[key] = Gauge(key, key) #(guage_name, description)
       if is_numeric(value) and key in gauges:
