@@ -5,7 +5,7 @@ services:
     image: temper/service:latest
     volumes:
       - /dev:/dev
-    restart: unless-stopped
+    restart: no
     pull_policy: build
     build:
       context: .
@@ -26,7 +26,7 @@ services:
     container_name: temper-exporter
     image: temper/exporter:latest
     depends_on: ["temper-py"]
-    restart: unless-stopped
+    restart: no
     pull_policy: build
     build:
       context: .
@@ -39,5 +39,5 @@ services:
       timeout: 30s
       retries: 3
       start_period: 20s
-    ports:
-      - 8000:8000
+    #ports:
+    #  - 8000:8000
